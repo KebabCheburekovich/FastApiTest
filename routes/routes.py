@@ -12,9 +12,9 @@ router = APIRouter(prefix='/orders')
 
 @router.post("", response_model=OrderReadSchema, summary='Create order')
 async def create_order(order: OrderCreateSchema):
-    conflicting_order = await Order.filter(start_at=order.start_at).first()
+    conflicting_order = await Order.filter(start_at=order.start_at)
 
-    if conflicting_order:
+    if len(conflicting_order) >= 2:
         raise HTTPException(status_code=400, detail="Both walkers are already booked for this time.")
 
     dog = await Dog.create(**order.dog.model_dump())
